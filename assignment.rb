@@ -10,9 +10,23 @@ ec2instance = {
   :Properties => properties,
   :Type => "AWS::EC2::Instance"
 }
+securityGroupIngress = {
+  :CidrIp => "0.0.0.0/0",
+  :FromPort => "22",
+  :IpProtocol => "tcp",
+  :ToPort => "22"
+}
+props = {
+  :GroupDescription => "Enable SSH access via port 22",
+  :SecurityGroupIngress => [securityGroupIngress]
+}
+instancesecuritygroup = {
+  :Properties => props,
+  :Type => "AWS::EC2::SecurityGroup"
+}
 resources = {
   :EC2Instance => ec2instance,
-  # :InstanceSecurityGroup = > instancesecuritygroup
+  :InstanceSecurityGroup => instancesecuritygroup
 }
 
 value = {
