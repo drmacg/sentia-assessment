@@ -1,4 +1,22 @@
 require 'json'
+require 'argv'
+
+arguments = ARGV.to_hash
+
+instances = arguments["instances"]
+instanceType = arguments["instance-type"]
+ipAddress = arguments["allow-ssh-from"]
+
+if instanceType == nil
+  instanceType = "t2.micro"
+end
+
+if ipAddress == nil
+  ipAddress = "0.0.0.0/0"
+else
+  ipAddress = ipAddress + "/32"
+end
+
 
 template = {
   AWSTemplateFormatVersion: '2010-09-09',
@@ -14,7 +32,7 @@ template = {
     EC2Instance: {
       Properties: {
         ImageId: 'ami-b97a12ce',
-        InstanceType: 't2.micro',
+        InstanceType: instanceType,
         SecurityGroups: [Ref: 'InstanceSecurityGroup']
       },
       Type: 'AWS::EC2::Instance'
@@ -23,7 +41,7 @@ template = {
       Properties: {
         GroupDescription: 'Enable SSH access via port 22',
         SecurityGroupIngress: [{
-          CidrIp: '0.0.0.0/0',
+          CidrIp: ipAddress,
           FromPort: '22',
           IpProtocol: 'tcp',
           ToPort: '22'
