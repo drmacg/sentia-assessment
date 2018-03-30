@@ -3,19 +3,17 @@ require 'argv'
 
 arguments = ARGV.to_hash
 
-instances = arguments["instances"]
-instanceType = arguments["instance-type"]
-ipAddress = arguments["allow-ssh-from"]
+instances = arguments['instances']
+instanceType = arguments['instance-type']
+ipAddress = arguments['allow-ssh-from']
 
-if instanceType == nil
-  instanceType = "t2.micro"
-end
+instanceType = 't2.micro' if instanceType.nil?
 
-if ipAddress == nil
-  ipAddress = "0.0.0.0/0"
-else
-  ipAddress = ipAddress + "/32"
-end
+ipAddress = if ipAddress.nil?
+              '0.0.0.0/0'
+            else
+              ipAddress + '/32'
+            end
 
 ec2InstanceTemplate = {
   Properties: {
@@ -42,10 +40,10 @@ template = {
 }
 
 for i in 2..instances.to_i
-  template[:Resources]["EC2Instance" + i.to_s] = ec2InstanceTemplate
+  template[:Resources]['EC2Instance' + i.to_s] = ec2InstanceTemplate
 end
 
-template[:Resources]["InstanceSecurityGroup"] = {
+template[:Resources]['InstanceSecurityGroup'] = {
   Properties: {
     GroupDescription: 'Enable SSH access via port 22',
     SecurityGroupIngress: [{
